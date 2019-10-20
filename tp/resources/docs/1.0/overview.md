@@ -2,7 +2,7 @@
 
 ---
 
-- [PHP Framework : Laravel](#section-1)
+- [PHP Framework : Laravel](/{{route}}/{{version}}/overview/#section-1)
 
 <a name="section-1"></a>
 ## PHP Framework : Laravel

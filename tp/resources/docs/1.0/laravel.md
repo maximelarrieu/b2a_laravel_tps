@@ -187,3 +187,65 @@ Route::group(['middleware' => ['role:reader']], function() {
 });
 ```
 
+### Créer un Profile
+Créons tout d'abord un model `Profile` avec un controller, une factory et une migration. Tout ceci peut être fait en une ligne de commande :
+```shell script
+php artisan make:model Profile -a
+```
+Où le `-a` créera le controller, factory, migration associés.
+
+Pour qu'un user possède un profil et inversement, on établit une relation `One-to-One` entre les deux modèles :
+```php
+// App\User
+public function profile() {
+    return $this->hasOne('App\Profile');
+}
+
+// App\Profile
+public function user() {
+     return $this->belongsTo('App\User');
+}
+```
+Les champs du profil se définissent dans sa factory et son controller :
+```php
+// database/factories/ProfileFactory.php
+$factory->define(Profile::class, function (Faker $faker) {
+    return [
+        'last_name' => $faker->lastName,
+        'first_name' => $faker->firstName,
+        'age' => $faker->dateTime,
+        'phone_number' => $faker->phoneNumber,
+        'address' => $faker->address,
+    ];
+});
+
+// database/migration/..create_profiles_table
+public function up()
+    {
+        Schema::create('profiles', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->string('last_name');
+            $table->string('first_name');
+            $table->dateTime('age');
+            $table->string('phone_number');
+            $table->string('address');
+            $table->timestamps();
+        });
+    }
+```
+
+Pour que le Seeder mette un profil à un chaque user :
+Enfin dans son seeder, nous pouvons créer des profils :
+```php
+public function run()
+    {
+        factory(App\Profile::class, 100)->create()->each(function ($user) {
+            $user->profile;
+        });
+    }
+```
+
+On peut maintenant update la base de données :
+```shell script
+php artisan migrate:fresh --seed
+```
