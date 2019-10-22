@@ -11,8 +11,6 @@ class ProfilesTableSeeder extends Seeder
      */
     public function run()
     {
-        factory(App\Profile::class, 100)->create()->each(function ($user) {
-            $user->profile;
-        });
+
     }
 }
